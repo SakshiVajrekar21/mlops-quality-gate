@@ -1,0 +1,53 @@
+name: ML validation and artifact delivery
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  train-test-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt
+
+      - name: Validate data, train baseline and candidate, enforce quality gate
+        run: python train.py
+
+      - name: Run application tests
+        run: pytest -q
+
+      - name: Add run identity and package required files
+        if: success()
+        run: |
+          mkdir -p package
+          cp artifacts/model.joblib package/model.joblib
+          cp artifacts/metrics.json package/metrics.json
+          cp predict.py package/predict.py
+          cp requirements.txt package/requirements.txt
+          echo "workflow_run_number=${GITHUB_RUN_NUMBER}" > package/package_info.txt
+          echo "commit_sha=${GITHUB_SHA}" >> package/package_info.txt
+          cd package
+          zip -r "../model-package-run-${GITHUB_RUN_NUMBER}.zip" .
+
+      - name: Publish validated model package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validated-model-package-run-${{ github.run_number }}
+          path: model-package-run-${{ github.run_number }}.zip
+          if-no-files-found: error
+          retention-days: 30
