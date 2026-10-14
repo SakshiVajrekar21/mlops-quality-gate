@@ -81,10 +81,9 @@ def main() -> None:
 
     # FAILURE A DEMO: temporarily replace this candidate with
     # DummyClassifier(strategy="most_frequent"). Restore this line afterward.
-    candidate = Pipeline([
-        ("scaler", StandardScaler()),
-        ("classifier", LogisticRegression(max_iter=2000, random_state=RANDOM_STATE)),
-    ])
+    
+    candidate = DummyClassifier(strategy="most_frequent")
+
     candidate.fit(X_train, y_train)
     candidate_predictions = candidate.predict(X_valid)
     candidate_f1 = f1_score(y_valid, candidate_predictions, zero_division=0)
