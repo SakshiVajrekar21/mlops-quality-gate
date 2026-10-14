@@ -16,7 +16,7 @@ def predict_one(features: dict[str, float], model_path: str | Path = DEFAULT_MOD
     missing = [name for name in expected if name not in features]
     extra = [name for name in features if name not in expected]
     if missing:
-        raise ValueError(f"Input is missing required feature(s): {', '.join(missing)}")
+        raise ValueError(f"Input feature is absent: {', '.join(missing)}")
     if extra:
         raise ValueError(f"Input contains unexpected feature(s): {', '.join(extra)}")
 
