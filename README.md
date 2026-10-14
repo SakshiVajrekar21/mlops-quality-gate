@@ -64,13 +64,13 @@ The downloadable artifact contains:
 ## Failure and recovery evidence
 After completing the demonstrations, replace the placeholders below with actual GitHub Actions run URLs. Do not invent or reuse URLs.
 
-- **Failure A — quality gate:** [Add failed workflow run URL]
+- **Failure A — quality gate:** [https://github.com/SakshiVajrekar21/mlops-quality-gate/actions/runs/38581967905].
   - Temporary change: replace the Logistic Regression candidate in `train.py` with `DummyClassifier(strategy="most_frequent")`.
   - Expected blocker: quality-gate check exits non-zero because the candidate does not improve on the baseline by 0.05.
   - Expected result: tests and artifact upload are not reached; no package is published.
   - Restore the Logistic Regression pipeline before Failure B.
 
-- **Failure B — application test:** [Add failed workflow run URL]
+- **Failure B — application test:** [https://github.com/SakshiVajrekar21/mlops-quality-gate/actions/runs/38581368353]
   - Temporary change: in `predict.py`, change the missing-feature error text so it no longer contains `missing required feature`.
   - Expected blocker: `test_missing_feature_is_rejected_clearly` fails its message match.
   - Expected result: the job fails before artifact upload; no package is published.
